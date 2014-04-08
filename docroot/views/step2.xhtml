@@ -1,0 +1,56 @@
+<f:view
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+>
+
+
+
+
+
+	<h:panelGrid columns="1" columnClasses="label, value" styleClass="grid">
+						
+			 <h:form id="myform1">
+			 
+			  <h:outputText value="Please select a single record from the table below." />
+			 <br/>
+			 <h:outputText value="#{searchPubs.redostep2msg}" style="color:red"/>
+			 <br/><br/>
+					<p:commandButton value="Back" id="step2back2" action="#{searchPubs.moveStep(1)}"/>
+           <h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" />
+           <h:outputText value="&#160;" /><h:outputText value="&#160;" />
+            <p:commandButton value="Next" id="step2next2" action="#{searchPubs.moveStep(2)}"/> <br/><br/>
+            <br/>
+				<p:dataTable id="myList1" var="pubs" value="#{searchPubs.results}" rowKey="#{pubs.index}" selection="#{searchPubs.searchresultpub}" selectionMode="single"  paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" style="width: 100%"> 
+                  
+						<p:column headerText="Search Results" style="width: 100%" > 
+					#{pubs.index}.	<h:outputText value="&#160;" />		
+	<h:outputText style="font-weight: bold" value="#{pubs.title}"  id="selectedpubconfirmtt2"/> <br/>
+	<h:outputText escape="false" value="#{pubs.getSubstring()}"  id="selectedpubconfirmff2" style="width: 500px;" />. <br/>
+	<h:outputText value="#{pubs.journalname}"  id="selectedpubconfirmjn2"/>.<h:outputText value="&#160;" />
+	<h:outputText value="#{pubs.journalyear}"  id="selectedpubconfirmjy2"/><h:outputText value="&#160;" />
+	<h:outputText value="#{pubs.journalmonth}"  id="selectedpubconfirmjm2"/><h:outputText value="&#160;" />
+	<h:outputText value="#{pubs.journalday}"  id="selectedpubconfirmjd2"/>;<h:outputText value="&#160;" />
+	<h:outputText value="#{pubs.epubsum2}"  id="epubsum8"/><h:outputText value="&#160;" /><br/>
+	<h:outputText value="#{pubs.doi}"  id="selectedpubdoi2"/><h:outputText value="&#160;" /><h:outputText value="&#160;" />
+	 <h:outputText value="#{pubs.epubsum}"  id="epubsum2"/><h:outputText value="&#160;" /><br/>
+	
+
+	<br/>PMID: <h:outputText value="#{pubs.pmid}"  id="pmid2"/>
+				   </p:column>   
+
+           
+			</p:dataTable>  
+	<br/><br/>
+	<p:commandButton value="Back" id="step2back" action="#{searchPubs.moveStep(1)}"/>
+           <h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" />
+           <h:outputText value="&#160;" /><h:outputText value="&#160;" />
+            <p:commandButton value="Next" id="step2next" action="#{searchPubs.moveStep(2)}" update="@form"/>
+			</h:form>
+						
+						</h:panelGrid>
+
+</f:view>
