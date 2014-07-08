@@ -19,10 +19,10 @@
 			 <br/>
 			 <h:outputText value="#{searchPubs.redostep2msg}" style="color:red"/>
 			 <br/><br/>
-					<p:commandButton value="Back" id="step2back2" action="#{searchPubs.moveStep(1)}"/>
+					<p:commandButton rendered="#{!empty searchPubs.results}" value="Back" id="step2back2" action="#{searchPubs.moveStep(1)}"/>
            <h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" />
            <h:outputText value="&#160;" /><h:outputText value="&#160;" />
-            <p:commandButton value="Next" id="step2next2" action="#{searchPubs.moveStep(2)}"/> <br/><br/>
+            <p:commandButton rendered="#{!empty searchPubs.results}" value="Next" id="step2next2" action="#{searchPubs.moveStep(2)}"/> <br/><br/>
             <br/>
 				<p:dataTable id="myList1" var="pubs" value="#{searchPubs.results}" rowKey="#{pubs.index}" selection="#{searchPubs.searchresultpub}" selectionMode="single"  paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" style="width: 100%"> 
                   
@@ -45,10 +45,12 @@
            
 			</p:dataTable>  
 	<br/><br/>
-	<p:commandButton value="Back" id="step2back" action="#{searchPubs.moveStep(1)}"/>
+	<p:commandButton rendered="#{!empty searchPubs.results}" value="Back" id="step2back" action="#{searchPubs.moveStep(1)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" />
            <h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" />
            <h:outputText value="&#160;" /><h:outputText value="&#160;" />
-            <p:commandButton value="Next" id="step2next" action="#{searchPubs.moveStep(2)}" update="@form"/>
+            <p:commandButton rendered="#{!empty searchPubs.results}" value="Next" id="step2next" action="#{searchPubs.moveStep(2)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>
+            
+             <p:commandButton rendered="#{empty searchPubs.results}" value="Return to Start a New Search" id="rt" action="#{searchPubs.moveStep(1)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>
 			</h:form>
 						
 						</h:panelGrid>

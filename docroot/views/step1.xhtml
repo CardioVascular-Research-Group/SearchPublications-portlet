@@ -15,12 +15,14 @@
 							<h:outputText value="Enter a search for a Publication already on the site to view and download CEP data content." />
 							<br/>
 							<h:outputText value="You may search by title, author, or PMID. Author names should be searched by last name, first name or last name, first initial."/>
+							<h:outputText value="Use * for wildcard searches."/>
 							<br/>
 							
-							<h:inputText value="#{searchPubs.searchentry}" style="width:400px" id="se" required="true" requiredMessage="Please enter a value to search."/>
+							<h:inputText value="#{searchPubs.searchentry}" style="width:400px" id="se"/>
 			<br/> <h:messages for="se"/>
+			<h:outputText value="#{searchPubs.redostep1}" style="color:red"/> 
 			<br/><br/>
-			<p:commandButton value="Next" id="step1next" action="#{searchPubs.moveStep(2)}" update="@form"/>
+			<p:commandButton value="Next" id="step1next" action="#{searchPubs.moveStep(2)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>
 			</h:form>
 				</h:panelGrid>
 

@@ -64,7 +64,7 @@
 </p:dataTable >
 <br/><br/><br/>
 
-<p:commandButton value="Return to Start a New Search" id="startover" action="#{searchPubs.moveStep(1)}"/>
+<p:commandButton value="Return to Start a New Search" id="startover" action="#{searchPubs.moveStep(1)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" />
 
 </h:form>
 

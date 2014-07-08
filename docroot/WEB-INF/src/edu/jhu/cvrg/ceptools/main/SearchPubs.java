@@ -102,7 +102,7 @@ public class SearchPubs {
 	    private List<String> filenames;
 	    private List<FileStorer> filesfromsolr;
 	    private String pmid;
-	  
+	    private String redostep1;
 	    private String selecteddownloadfiletype;
 	    private String selecteddownloadfilename;
 	    int step;
@@ -134,10 +134,19 @@ public class SearchPubs {
     	 
     	 step = 1;
     	 selecteddownloadfiletype = selecteddownloadfilename="";
-    	 redostep2= false;
-    	 redostep2msg = "";
+    	  redostep2= false;
+    	  redostep1 =redostep2msg = "";
 	}
 	
+	 public void setRedostep1(String m)
+	    {
+	    	redostep1 = m;
+	    }
+	    
+	    public String getRedostep1()
+	    {
+	    	return redostep1;
+	    }
 	
 	  public void setRedostep2msg(String m)
 	    {
@@ -201,7 +210,7 @@ public class SearchPubs {
 		
 		
 		
-		String fileloc = PropsUtil.get("data_store") + pmid + "/";
+		String fileloc = PropsUtil.get("data_store2") + pmid + "/";
 		FileStorer currfile = new FileStorer();
 		currfile.setDescription(sdescription);
 		currfile.setFigure(sfigure);
@@ -258,17 +267,34 @@ public class SearchPubs {
 		
 		step = nextstep;
 		
+		
+		
 		if(step ==1)
 		{
 			Clean();
+			
 		}
 		if(step == 2)
 		{
 			if(previousstep == 1)
 			{
 			Clean2();
+			
+					if(searchentry.isEmpty())
+					{
+						
+						step = 1;
+						redostep1 = "Please enter a valid search. Use * for wildcard searches.";
+					}
+					else
+					{
+						redostep1 = "";
+						SearchSolr();
+						redostep2 = true;
+					}
+			
 			}
-			if(redostep2 == true)
+			else if(redostep2 == true)
 			{
 				if(searchresultpub != null)
 				{
@@ -282,12 +308,8 @@ public class SearchPubs {
 				
 				
 			}
-			else
-			{
 			
-			SearchSolr();
-			redostep2 = true;
-			}
+			
 		}
 		if(step == 3)
 		{
@@ -328,7 +350,7 @@ public class SearchPubs {
 		
 		selecteddownloadfile = new FileStorer();
 		
-		String fileloc = PropsUtil.get("data_store") + pmid + "/";
+		String fileloc = PropsUtil.get("data_store2") + pmid + "/";
 		String filen = pmid + ".zip";
 		
 		selecteddownloadfile.setFilelocation(fileloc);
@@ -441,7 +463,7 @@ public class SearchPubs {
 		
 		
     	
-    	String currlocation = PropsUtil.get("data_store") + this.searchresultpub.getPmid() + "/";
+    	String currlocation = PropsUtil.get("data_store2") + this.searchresultpub.getPmid() + "/";
     	String zipfilelocation = currlocation+ this.searchresultpub.getPmid()+".zip";
     	File foldertozip = new File(currlocation);
     	 
@@ -608,11 +630,12 @@ public void downloadFile(String filename, String filetype){
 			 String query;
 			
 			 //query = "pid:*";
-			 query = "collector:" + searchentry;
+			 query = "completion:true AND collector:" + searchentry;
 			 
 			
 			 SolrQuery theq = new SolrQuery();
 			 theq.setQuery(query);
+			 theq.setRows(1000);
 			 
 			
 			 QueryResponse response = new QueryResponse();
