@@ -13,7 +13,7 @@ public class FileStorer implements Serializable{
 	private String description;
 	private long filesize;
 	private String figpandisplay;
-	
+	private static final long serialVersionUID = 1L;
 	
 	private int index;
 	

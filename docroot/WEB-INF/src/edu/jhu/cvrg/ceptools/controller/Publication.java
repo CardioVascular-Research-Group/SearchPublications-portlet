@@ -1,21 +1,14 @@
 package edu.jhu.cvrg.ceptools.controller;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 
-
-
-
-
-public class Publication {
+public class Publication implements Serializable{
 	
-	  
-
-	    private static Logger logger2 = Logger.getLogger(Publication.class.getName());  
-        
+	    private static final long serialVersionUID = 2L;
         private List<String> fauthors;
 	    private List<String> lauthors;
 	    private List<String> fullnames;
@@ -163,10 +156,10 @@ public class Publication {
     	  return fullnames;
       }
         
-   public void setAuthorfull(String f)
-   {
-	   authorfull = f;
-   }
+      public void setAuthorfull(String f)
+      {
+    	  authorfull = f;
+      }
 	    public String getAuthorfull()
 	    {
 	    	return authorfull;

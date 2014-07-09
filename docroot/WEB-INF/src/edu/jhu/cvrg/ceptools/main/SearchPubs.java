@@ -28,6 +28,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +36,7 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-import javax.faces.bean.ViewScoped;
+
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.portlet.PortletResponse;
@@ -44,27 +45,19 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.primefaces.event.FlowEvent;
-
-
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
-import org.apache.solr.client.solrj.response.CoreAdminResponse;
+
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
-import org.apache.solr.common.util.NamedList;
-
-
-
-
 
 import com.liferay.faces.portal.context.LiferayFacesContext;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.util.PortalUtil;
-import com.sun.jna.Native;
 
 import edu.jhu.cvrg.ceptools.controller.FileStorer;
 import edu.jhu.cvrg.ceptools.controller.Publication;
@@ -82,186 +75,202 @@ import edu.jhu.cvrg.ceptools.controller.Publication;
 @SessionScoped
 
 
-public class SearchPubs {
+public class SearchPubs implements Serializable{
 
-	/**
-	 * @param args
-	 */
+	private static final long serialVersionUID = 3L;
 	private static Logger logger = Logger.getLogger(SearchPubs.class.getName());  
 	
 	List<Publication> results;
-	 private List<FileStorer> allfiles;
+	private List<FileStorer> allfiles;
 
-	 private FileStorer selectedfile;
-	 private boolean redostep2;
-	 private String redostep2msg;
-	  private FileStorer selecteddownloadfile;
+	private FileStorer selectedfile;
+	private boolean redostep2;
+	private String redostep2msg;
+	private FileStorer selecteddownloadfile;
 	Publication searchresultpub;
 	String searchentry;
-	 private List<File> files;
-	    private List<String> filenames;
-	    private List<FileStorer> filesfromsolr;
-	    private String pmid;
-	    private String redostep1;
-	    private String selecteddownloadfiletype;
-	    private String selecteddownloadfilename;
-	    int step;
-	    int solrindex;
+	private List<File> files;
+	private List<String> filenames;
+    private List<FileStorer> filesfromsolr;
+    private String pmid;
+    private String redostep1;
+    private String selecteddownloadfiletype;
+    private String selecteddownloadfilename;
+    int step;
+    int solrindex;
 	
 
 	
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+public SearchPubs()
+{
+	allfiles = new ArrayList<FileStorer>();
+	redostep2 = false;
+	filesfromsolr = new ArrayList<FileStorer>();
+	searchentry = "";
+	selecteddownloadfile = null;
+	searchresultpub = null;
+	selectedfile = null;
+	results = new ArrayList<Publication>();
+	files = new ArrayList<File>();
+	filenames = new ArrayList<String>();
+	solrindex = 0;
+	pmid = "";
+	step = 1;
+	selecteddownloadfiletype = selecteddownloadfilename="";
+	redostep2= false;
+	redostep1 =redostep2msg = "";
+}
 
-	}
-	
-	public SearchPubs()
-	{
-		allfiles = new ArrayList<FileStorer>();
-		redostep2 = false;
-		filesfromsolr = new ArrayList<FileStorer>();
-		searchentry = "";
-		selecteddownloadfile = null;
-		searchresultpub = null;
-		selectedfile = null;
-		results = new ArrayList<Publication>();
-		 files = new ArrayList<File>();
-    	 filenames = new ArrayList<String>();
-    	 
-    	 solrindex = 0;
-    	 pmid = "";
-    	 
-    	 
-    	 step = 1;
-    	 selecteddownloadfiletype = selecteddownloadfilename="";
-    	  redostep2= false;
-    	  redostep1 =redostep2msg = "";
-	}
-	
-	 public void setRedostep1(String m)
-	    {
-	    	redostep1 = m;
-	    }
-	    
-	    public String getRedostep1()
-	    {
-	    	return redostep1;
-	    }
-	
-	  public void setRedostep2msg(String m)
-	    {
-	    	redostep2msg = m;
-	    }
-	    
-	    public String getRedostep2msg()
-	    {
-	    	return redostep2msg;
-	    }
-	    
-	    public void setRedostep2(boolean m)
-	    {
-	    	redostep2 = m;
-	    }
-	    
-	    public boolean getRedostep2()
-	    {
-	    	return redostep2;
-	    }
-	
-	public void convertStore(String fileinfo, Publication currlist)
-	{
-		int fname, fsize, ffigure, fpanel, fdescription = -1;
-		String sname , ssize, sfigure, spanel, sdescription;
-		sname = ssize= sfigure= spanel= sdescription = "";
-		
-		
-		fsize = fileinfo.indexOf("filesize:");
-		fdescription = fileinfo.indexOf(",filedescription:");
-		ffigure = fileinfo.indexOf(",filefigure:");
-		fpanel = fileinfo.indexOf(",filepanel:");
-		fname = fileinfo.indexOf(",filename:");
-		
-		if(fsize != -1 && fdescription != -1)
-		{
-			ssize = (String) fileinfo.subSequence(fsize, fdescription);
-		}
-		if(ffigure!= -1 && fdescription != -1)
-		{
-			sdescription = (String) fileinfo.subSequence(fdescription, ffigure);
-		}
-		if(ffigure!= -1 && fpanel != -1)
-		{
-			sfigure = (String) fileinfo.subSequence(ffigure, fpanel);
-		}
-		if(fname != -1 && fpanel != -1)
-		{
-			spanel = (String) fileinfo.subSequence(fpanel, fname);
-		}
-		if(fname != -1)
-		{
-			sname = (String) fileinfo.subSequence(fname,fileinfo.length());
-		}
-		
-		ssize = ssize.replace("filesize:","" );
-		sname = sname.replace(",filename:", "");
-		sdescription = sdescription.replace(",filedescription:", "");
-		sfigure = sfigure.replace(",filefigure:", "");
-		spanel = spanel.replace(",filepanel:", "");
-		
-		
-		
-		String fileloc = PropsUtil.get("data_store2") + pmid + "/";
-		FileStorer currfile = new FileStorer();
-		currfile.setDescription(sdescription);
-		currfile.setFigure(sfigure);
-		currfile.setFilesize(Long.valueOf(ssize));
-		currfile.setFilename(sname);
-		currfile.setPanel(spanel);
-		currfile.setIndex(solrindex);
-		currfile.setFilelocation(fileloc);
-		currfile.setLocalfilestore(fileloc);
-		
-	
-		currlist.addFile(currfile);
-		//filesfromsolr.add(currfile);
-		
-		
-		solrindex++;
-		
-	}
-	
-	
-	public int getSolrindex()
-	{
-		return solrindex;
-	}
-	
-	public void setSolrIndex(int s)
-	{
-		solrindex = s;
-	}
-	
-	public void setFilesfromsolr(List<FileStorer> f)
-	{
-		filesfromsolr = f;
-	}
-	
-	public List<FileStorer> getFilesfromsolr()
-	{
-		return filesfromsolr;
-	}
-	
-	public void setAllfiles()
-	{
-		
-	}
-	public List<FileStorer> getAllfiles()
-	{
-		return allfiles;
-	}
-	
 
-	public void moveStep(int nextstep)
+public void reassignStepsandSearch()
+{
+	searchentry = "";	
+	step = 1;
+
+}
+
+public void cleanMutual()
+{
+	searchresultpub = null;
+	results = new ArrayList<Publication>();
+	allfiles = new ArrayList<FileStorer>();
+	selecteddownloadfile = null;
+	searchresultpub = null;
+	selectedfile = null;
+	results = new ArrayList<Publication>();
+	files = new ArrayList<File>();
+	filenames = new ArrayList<String>();
+	solrindex = 0;
+	redostep2 = false;
+	redostep2msg = "";
+	pmid ="";
+	selecteddownloadfiletype = selecteddownloadfilename="";
+}
+
+	
+	
+public void setRedostep1(String m)
+{
+    	redostep1 = m;
+ }
+    
+ public String getRedostep1()
+ {
+    	return redostep1;
+ }
+
+ public void setRedostep2msg(String m)
+ {
+    	redostep2msg = m;
+ }
+    
+ public String getRedostep2msg()
+ {
+    	return redostep2msg;
+ }
+    
+ public void setRedostep2(boolean m)
+ {
+    	redostep2 = m;
+ }
+    
+ public boolean getRedostep2()
+ {
+    	return redostep2;
+ }
+
+
+public int getSolrindex()
+{
+	return solrindex;
+}
+
+public void setSolrIndex(int s)
+{
+	solrindex = s;
+}
+
+public void setFilesfromsolr(List<FileStorer> f)
+{
+	filesfromsolr = f;
+}
+
+public List<FileStorer> getFilesfromsolr()
+{
+	return filesfromsolr;
+}
+
+public void setAllfiles()
+{
+	
+}
+public List<FileStorer> getAllfiles()
+{
+	return allfiles;
+}
+
+	
+public void setSelecteddownloadfile(FileStorer afiles)
+{
+	selecteddownloadfile = afiles;
+}
+
+public FileStorer getSelecteddownloadfile()
+{
+	return selecteddownloadfile;
+}
+
+public void setSelectedfile(FileStorer thefile)
+{
+	selectedfile = thefile;
+}
+
+public FileStorer getSelectedfile()
+{
+	return selectedfile;
+}
+
+public void setResults(List<Publication> re)
+{
+	this.results = re;
+}
+
+public List<Publication> getResults()
+{
+	return results;
+}
+
+public void setSearchresultpub (Publication pub)
+{
+	this.searchresultpub = pub;
+}
+
+public Publication getSearchresultpub()
+{
+	return searchresultpub;
+}
+
+public String getSearchentry ()
+{
+	return searchentry;
+}
+
+public void setSearchentry(String se)
+{
+	this.searchentry = se;
+}
+
+  public void setStep(int currstep)
+  {
+	   step = currstep;
+  }
+  
+  public int getStep()
+  {
+	   return step;
+  }
+  
+  public void moveStep(int nextstep)
 	{
 		int previousstep = step;
 		
@@ -271,14 +280,14 @@ public class SearchPubs {
 		
 		if(step ==1)
 		{
-			Clean();
-			
+			cleanMutual();
+			reassignStepsandSearch();
 		}
 		if(step == 2)
 		{
 			if(previousstep == 1)
 			{
-			Clean2();
+			cleanMutual();
 			
 					if(searchentry.isEmpty())
 					{
@@ -328,156 +337,150 @@ public class SearchPubs {
 		}
 		
 		
-	}
+}
 	
-	public void downloadRawFiles(FileStorer currfile){
+public void downloadRawFiles(FileStorer currfile){
 
-
-		
 		selecteddownloadfile = currfile;
-		
 		
 	    if(selecteddownloadfile != null){
 	    	
 	           downloadInit();
 	    }
-	    //return "success";
-	}
 	
-	public void downloadZipOnly()
+}
+
+public void convertStore(String fileinfo, Publication currlist)
+{
+	int fname, fsize, ffigure, fpanel, fdescription = -1;
+	String sname , ssize, sfigure, spanel, sdescription;
+	sname = ssize= sfigure= spanel= sdescription = "";
+	
+	
+	fsize = fileinfo.indexOf("filesize:");
+	fdescription = fileinfo.indexOf(",filedescription:");
+	ffigure = fileinfo.indexOf(",filefigure:");
+	fpanel = fileinfo.indexOf(",filepanel:");
+	fname = fileinfo.indexOf(",filename:");
+	
+	if(fsize != -1 && fdescription != -1)
 	{
-		
-		
-		selecteddownloadfile = new FileStorer();
-		
-		String fileloc = PropsUtil.get("data_store2") + pmid + "/";
-		String filen = pmid + ".zip";
-		
-		selecteddownloadfile.setFilelocation(fileloc);
-		selecteddownloadfile.setFilename(filen);
-		selecteddownloadfile.setIndex(0);
-		selecteddownloadfile.setLocalfilestore(fileloc);
-		selecteddownloadfile.setFiletype("zip");
-		
-		
-		downloadFile(filen,"zip");
+		ssize = (String) fileinfo.subSequence(fsize, fdescription);
 	}
-	
-	public void downloadInit()
+	if(ffigure!= -1 && fdescription != -1)
 	{
+		sdescription = (String) fileinfo.subSequence(fdescription, ffigure);
+	}
+	if(ffigure!= -1 && fpanel != -1)
+	{
+		sfigure = (String) fileinfo.subSequence(ffigure, fpanel);
+	}
+	if(fname != -1 && fpanel != -1)
+	{
+		spanel = (String) fileinfo.subSequence(fpanel, fname);
+	}
+	if(fname != -1)
+	{
+		sname = (String) fileinfo.subSequence(fname,fileinfo.length());
+	}
+	
+	ssize = ssize.replace("filesize:","" );
+	sname = sname.replace(",filename:", "");
+	sdescription = sdescription.replace(",filedescription:", "");
+	sfigure = sfigure.replace(",filefigure:", "");
+	spanel = spanel.replace(",filepanel:", "");
+	
+	
+	
+	String fileloc = PropsUtil.get("data_store2") + pmid + "/";
+	FileStorer currfile = new FileStorer();
+	currfile.setDescription(sdescription);
+	currfile.setFigure(sfigure);
+	currfile.setFilesize(Long.valueOf(ssize));
+	currfile.setFilename(sname);
+	currfile.setPanel(spanel);
+	currfile.setIndex(solrindex);
+	currfile.setFilelocation(fileloc);
+	currfile.setLocalfilestore(fileloc);
+	
+
+	currlist.addFile(currfile);
+	//filesfromsolr.add(currfile);
+	
+	
+	solrindex++;
+	
+}
+	
+public void downloadZipOnly()
+{
 		
 		
-		//Gather the content type and store
-		selecteddownloadfilename = selecteddownloadfile.getFilename();
-		
-		
-		
-		String currtype = FilenameUtils.getExtension(selecteddownloadfile.getFilename());
-		
-		
+	selecteddownloadfile = new FileStorer();
 	
-		
-	     selecteddownloadfile.setFiletype(currtype);
-		
-		downloadFile(selecteddownloadfilename, selecteddownloadfiletype);
-		
-		//Begin the download process
-	}
+	String fileloc = PropsUtil.get("data_store2") + pmid + "/";
+	String filen = pmid + ".zip";
 	
-	public void setSelecteddownloadfile(FileStorer afiles)
-	{
-		selecteddownloadfile = afiles;
-	}
-	
-	public FileStorer getSelecteddownloadfile()
-	{
-		return selecteddownloadfile;
-	}
-	
-	public void setSelectedfile(FileStorer thefile)
-	{
-		selectedfile = thefile;
-	}
-	
-	public FileStorer getSelectedfile()
-	{
-		return selectedfile;
-	}
-	
-	public void setResults(List<Publication> re)
-	{
-		this.results = re;
-	}
-	
-	public List<Publication> getResults()
-	{
-		return results;
-	}
-	
-	public void setSearchresultpub (Publication pub)
-	{
-		this.searchresultpub = pub;
-	}
-	
-	public Publication getSearchresultpub()
-	{
-		return searchresultpub;
-	}
-	
-	public String getSearchentry ()
-	{
-		return searchentry;
-	}
-	
-	public void setSearchentry(String se)
-	{
-		this.searchentry = se;
-	}
+	selecteddownloadfile.setFilelocation(fileloc);
+	selecteddownloadfile.setFilename(filen);
+	selecteddownloadfile.setIndex(0);
+	selecteddownloadfile.setLocalfilestore(fileloc);
+	selecteddownloadfile.setFiletype("zip");
 	
 	
-	 public String onFlowProcess(FlowEvent event) {  
-		 if(event.getOldStep().equalsIgnoreCase("searchpubs") )
-	       {
-			 
-			 SearchSolr();
-			 return "searchresultsofpubs";
-	       }
-		 else if(event.getOldStep().equalsIgnoreCase("searchresultsofpubs") )
-	       {
-			  RetrieveFiles();
-			 
-	          return "searchresultdisplay";
-	       }	
-		 else
-		 {
-			 Clean();
-			 return "searchpubs";
-		 }
+	downloadFile(filen,"zip");
+}
+	
+public void downloadInit()
+{
+	
+	//Gather the content type and store
+	selecteddownloadfilename = selecteddownloadfile.getFilename();
+
+	String currtype = FilenameUtils.getExtension(selecteddownloadfile.getFilename());
+
+  selecteddownloadfile.setFiletype(currtype);
+//Begin the download process
+	downloadFile(selecteddownloadfilename, selecteddownloadfiletype);
+	
+	
+}
+public String onFlowProcess(FlowEvent event) {  
+	 if(event.getOldStep().equalsIgnoreCase("searchpubs") )
+       {
 		 
+		 SearchSolr();
+		 return "searchresultsofpubs";
+       }
+	 else if(event.getOldStep().equalsIgnoreCase("searchresultsofpubs") )
+       {
+		  RetrieveFiles();
+		 
+          return "searchresultdisplay";
+       }	
+	 else
+	 {
+			cleanMutual();
+			reassignStepsandSearch();
+		 return "searchpubs";
 	 }
-	 
-	 private void RetrieveFiles() {
 		 
-		int currpmid =  searchresultpub.getPmid();
-		pmid = String.valueOf(currpmid);
-		
-		
-    	
-    	String currlocation = PropsUtil.get("data_store2") + this.searchresultpub.getPmid() + "/";
-    	String zipfilelocation = currlocation+ this.searchresultpub.getPmid()+".zip";
-    	File foldertozip = new File(currlocation);
-    	 
-    	
-    	
-    	File folder = new File(currlocation);
-    	
-    	
-    
-    	
+}
+	 
+private void RetrieveFiles() {
+		 
+	int currpmid =  searchresultpub.getPmid();
+	pmid = String.valueOf(currpmid);
+	
+
+	String currlocation = PropsUtil.get("data_store2") + this.searchresultpub.getPmid() + "/";
+
+	File folder = new File(currlocation);
+	
     	for(File currfile: folder.listFiles())
     	{
     		
-           String absolutePath = currfile.getAbsolutePath();
+            String absolutePath = currfile.getAbsolutePath();
     		FileStorer currfilestore = new FileStorer();
     		currfilestore.setFilename(currfile.getName());
     		currfilestore.setFilelocation(currlocation);
@@ -488,12 +491,10 @@ public class SearchPubs {
     		filenames.add(currfile.getName());
     	}
     	
-    	searchresultpub.setFiles(files);
-    	searchresultpub.setFilenames(filenames);
+	searchresultpub.setFiles(files);
+	searchresultpub.setFilenames(filenames);
 
-
-		
-	}
+}
 	 
 public void downloadFile(String filename, String filetype){
          
@@ -505,131 +506,70 @@ public void downloadFile(String filename, String filetype){
      
        
     
-         
-  FacesContext facesContext = (FacesContext) FacesContext.getCurrentInstance();
-  ExternalContext externalContext = facesContext.getExternalContext();
-  PortletResponse portletResponse = (PortletResponse) externalContext.getResponse();
-  HttpServletResponse response = PortalUtil.getHttpServletResponse(portletResponse);
+		         
+		  FacesContext facesContext = (FacesContext) FacesContext.getCurrentInstance();
+		  ExternalContext externalContext = facesContext.getExternalContext();
+		  PortletResponse portletResponse = (PortletResponse) externalContext.getResponse();
+		  HttpServletResponse response = PortalUtil.getHttpServletResponse(portletResponse);
+		
+		
+		  File file = new File(selecteddownloadfile.getFilelocation(), filename);
+		  BufferedInputStream input = null;
+		  BufferedOutputStream output = null;
+		
+		 
+		  try {
+		  input = new BufferedInputStream(new FileInputStream(file), 10240);
+		 
+		  response.reset();
+		  response.setHeader("Content-Type", contentType);
+		  response.setHeader("Content-Length", String.valueOf(file.length()));
+		  response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
+		  response.flushBuffer();
+		  output = new BufferedOutputStream(response.getOutputStream(), 10240);
+		  
+		  byte[] buffer = new byte[10240];
+		  int length;
+		  while ((length = input.read(buffer)) > 0) {
+		  output.write(buffer, 0, length);
+		  }
+		 
+		  output.flush();
+		  } catch (FileNotFoundException e) {
+		                 e.printStackTrace();
+		         } catch (IOException e) {
+		                 e.printStackTrace();
+		         } finally {
+		  try {
+		                         output.close();
+		  input.close();
+		                 } catch (IOException e) {
+		                         e.printStackTrace();
+		                 }
+		  }
+		 
+		  facesContext.responseComplete();
 
-
-  File file = new File(selecteddownloadfile.getFilelocation(), filename);
-  BufferedInputStream input = null;
-  BufferedOutputStream output = null;
-
- 
-  try {
-  input = new BufferedInputStream(new FileInputStream(file), 10240);
- 
-  response.reset();
-  response.setHeader("Content-Type", contentType);
-  response.setHeader("Content-Length", String.valueOf(file.length()));
-  response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
-  response.flushBuffer();
-  output = new BufferedOutputStream(response.getOutputStream(), 10240);
-  
-  byte[] buffer = new byte[10240];
-  int length;
-  while ((length = input.read(buffer)) > 0) {
-  output.write(buffer, 0, length);
-  }
- 
-  output.flush();
-  } catch (FileNotFoundException e) {
-                 e.printStackTrace();
-         } catch (IOException e) {
-                 e.printStackTrace();
-         } finally {
-  try {
-                         output.close();
-  input.close();
-                 } catch (IOException e) {
-                         e.printStackTrace();
-                 }
-  }
- 
-  facesContext.responseComplete();
-
- 
 }
 
-
-	public void Clean()
-	 {
-		 searchentry = "";
-			
-			searchresultpub = null;
-			results = new ArrayList<Publication>();
-			allfiles = new ArrayList<FileStorer>();
-			searchentry = "";
-			selecteddownloadfile = null;
-			searchresultpub = null;
-			selectedfile = null;
-			results = new ArrayList<Publication>();
-			 files = new ArrayList<File>();
-	    	 filenames = new ArrayList<String>();
-	    	 solrindex = 0;
-	    	
-	    	 redostep2 = false;
-	    	 redostep2msg = "";
-	    	 pmid ="";
-	    	 step = 1;
-	    	 selecteddownloadfiletype = selecteddownloadfilename="";
-	 }
-	
-	public void Clean2()
-	{
-		 
-			
-			searchresultpub = null;
-			results = new ArrayList<Publication>();
-			allfiles = new ArrayList<FileStorer>();
-		
-			selecteddownloadfile = null;
-			searchresultpub = null;
-			selectedfile = null;
-			results = new ArrayList<Publication>();
-			 files = new ArrayList<File>();
-	    	 filenames = new ArrayList<String>();
-	    	 solrindex = 0;
-	    	
-	    	 redostep2 = false;
-	    	 redostep2msg = "";
-	    	 pmid ="";
-	    
-	    	 selecteddownloadfiletype = selecteddownloadfilename="";
-	}
-	
-	   public void setStep(int currstep)
-	   {
-		   step = currstep;
-	   }
-	   
-	   public int getStep()
-	   {
-		   return step;
-	   }
-	   
 	 
-	 public void SearchSolr()
+	@SuppressWarnings("unchecked")
+	public void SearchSolr()
 	 {
 		
-		 
-		 
+ 
 		 try
 		 {
 			
 			 CoreAdminRequest adminRequest = new CoreAdminRequest();
 			 adminRequest.setAction(CoreAdminAction.RELOAD);
-			 CoreAdminResponse adminResponse = adminRequest.process(new HttpSolrServer("http://localhost:8983/solr"));
-			 NamedList<NamedList<Object>> coreStatus = adminResponse.getCoreStatus();
-			 
-			 
+
 			 SolrServer solr = new HttpSolrServer ("http://localhost:8983/solr");
 			 
 			 
 			 String query;
 			
-			 //query = "pid:*";
+			
 			 query = "completion:true AND collector:" + searchentry;
 			 
 			
@@ -654,8 +594,7 @@ public void downloadFile(String filename, String filetype){
 			 for(SolrDocument doc: list)
 			 {
 				Publication currlist = new Publication();
-				 List<String> fnames = new ArrayList<String> ();
-				 List<String> lnames = new ArrayList<String> ();
+
 				 List<String> fullnames =  new ArrayList<String> ();
 				 String currepubsum1 = "", currepubsum2 = "";
 				
@@ -718,7 +657,9 @@ public void downloadFile(String filename, String filetype){
 					
 				}
 			
-				currlist.setFauthors((List<String>) doc.getFieldValue("author_firstname"));
+				
+				List<String> fieldValue = (List<String>) doc.getFieldValue("author_firstname");
+				currlist.setFauthors(fieldValue);
 				currlist.setLauthors((List<String>) doc.getFieldValue("author_lastname"));
 				
 				
@@ -771,41 +712,28 @@ public void downloadFile(String filename, String filetype){
   	        		currepubsum2 += currlist.getJournalstartpg() + ".";
   	        	}
   	        	
-  	        	
-	              
-	              
-	              if( currlist.getEpubday().length()<1 && currlist.getEpubmonth().length()<1  && currlist.getEpubyear().length()<1)
-  	              {
-  	            	currepubsum1 = "[Epub ahead of print]"; 
-  	              }
-	              else if(currlist.getEpubyear().length()>0)
-	              {
+	            if( currlist.getEpubday().length()<1 && currlist.getEpubmonth().length()<1  && currlist.getEpubyear().length()<1)
+	            {
+	            	currepubsum1 = "[Epub ahead of print]"; 
+	            }
+	            else if(currlist.getEpubyear().length()>0)
+	            {
 	            	  currepubsum1= "Epub "  + currlist.getEpubyear() + " " + currlist.getEpubmonth() + " " + currlist.getEpubday();
-	              }
-	              else
-	              {
+	            }
+	            else
+	            {
 	            	  currepubsum1 = "";
-	              }
-				
-	              currlist.setEpubsum(currepubsum1);
-	              currlist.setEpubsum2(currepubsum2);
-	              currlist.setIndex(docnum);
-				
-				
-				
-				//currlist.setFullnames(doc.getFieldValue("ptitle").toString());
-				
-				
-				
+	            }
 			
-				results.add(currlist);
-				docnum++;
+              currlist.setEpubsum(currepubsum1);
+              currlist.setEpubsum2(currepubsum2);
+              currlist.setIndex(docnum);
+				
+
+			  results.add(currlist);
+			  docnum++;
 			 }
-			 
-			 
-			 
-		
-		  
+
 		 }
 		 catch (Exception ex)
 		 {
@@ -840,9 +768,5 @@ public void downloadFile(String filename, String filetype){
 		 }
 	 }
 	 
-	 public void setSolrResult()
-	 {
-		 
-	 }
 
 }
