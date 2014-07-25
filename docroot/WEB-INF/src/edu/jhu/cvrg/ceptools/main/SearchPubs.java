@@ -93,7 +93,7 @@ public class SearchPubs implements Serializable{
 	private List<String> filenames;
     private List<FileStorer> filesfromsolr;
     private String pmid;
-    private String redostep1;
+    private String step1msg;
     private String selecteddownloadfiletype;
     private String selecteddownloadfilename;
     int step;
@@ -118,7 +118,8 @@ public SearchPubs()
 	step = 1;
 	selecteddownloadfiletype = selecteddownloadfilename="";
 	redostep2= false;
-	redostep1 =redostep2msg = "";
+	step1msg = "";
+	redostep2msg = "";
 }
 
 
@@ -141,6 +142,7 @@ public void cleanMutual()
 	files = new ArrayList<File>();
 	filenames = new ArrayList<String>();
 	solrindex = 0;
+	step1msg = "";
 	redostep2 = false;
 	redostep2msg = "";
 	pmid ="";
@@ -149,14 +151,14 @@ public void cleanMutual()
 
 	
 	
-public void setRedostep1(String m)
+public void setStep1msg(String m)
 {
-    	redostep1 = m;
+    	step1msg = m;
  }
     
- public String getRedostep1()
+ public String getStep1msg()
  {
-    	return redostep1;
+    	return step1msg;
  }
 
  public void setRedostep2msg(String m)
@@ -200,9 +202,9 @@ public List<FileStorer> getFilesfromsolr()
 	return filesfromsolr;
 }
 
-public void setAllfiles()
+public void setAllfiles(List<FileStorer> g)
 {
-	
+	allfiles = g;
 }
 public List<FileStorer> getAllfiles()
 {
@@ -293,11 +295,11 @@ public void setSearchentry(String se)
 					{
 						
 						step = 1;
-						redostep1 = "Please enter a valid search. Use * for wildcard searches.";
+						redostep2msg = "Please enter a valid search. Use * for wildcard searches.";
 					}
 					else
 					{
-						redostep1 = "";
+						redostep2msg = "";
 						SearchSolr();
 						redostep2 = true;
 					}
@@ -476,6 +478,8 @@ private void RetrieveFiles() {
 	String currlocation = PropsUtil.get("data_store2") + this.searchresultpub.getPmid() + "/";
 
 	File folder = new File(currlocation);
+	
+	
 	
     	for(File currfile: folder.listFiles())
     	{
