@@ -12,17 +12,17 @@
 
 			
 					<h:form id="step1start">	
-							<h:outputText value="Enter a search for a Publication already on the site to view and download CEP data content." />
+							<h:outputText value="Search the CEP Tools repository for publications in order to view and download associated data content." /> <br/>
 							<br/>
-							<h:outputText value="You may search by title, author, or PMID. Author names should be searched by last name, first name or last name, first initial."/>
-							<h:outputText value="Use * for wildcard searches."/>
+							<h:outputText value="You may search by title, author, or PMID. To search by author, you may enter the name as “Last Name, First Name”, “Last Name, First Initial”, or simply “Last Name”."/>
+							<h:outputText value=" Use * for wildcard searches."/>
 							<br/>
 							
 							<h:inputText value="#{searchPubs.searchentry}" style="width:400px" id="se"/>
 			<br/> <h:messages for="se"/>
 				 <h:outputText value="#{searchPubs.redostep2msg}" style="color:red"/>
 			<br/><br/>
-			<p:commandButton value="Next: Search CEP Tools" id="step1next" action="#{searchPubs.moveStep(2)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>
+			<p:commandButton value="Next: View CEP Tools Search Results" id="step1next" action="#{searchPubs.moveStep(2)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>
 			</h:form>
 				
 
