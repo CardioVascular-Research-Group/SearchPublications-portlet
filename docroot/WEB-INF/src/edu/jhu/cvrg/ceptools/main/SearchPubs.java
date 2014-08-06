@@ -63,14 +63,6 @@ import edu.jhu.cvrg.ceptools.controller.FileStorer;
 import edu.jhu.cvrg.ceptools.controller.Publication;
 
 
-
-
-
-
-
-
-
-
 @ManagedBean(name="searchPubs")
 @SessionScoped
 
@@ -184,82 +176,82 @@ public void setStep1msg(String m)
 
 public int getSolrindex()
 {
-	return solrindex;
+		return solrindex;
 }
 
 public void setSolrIndex(int s)
 {
-	solrindex = s;
+		solrindex = s;
 }
 
 public void setFilesfromsolr(List<FileStorer> f)
 {
-	filesfromsolr = f;
+		filesfromsolr = f;
 }
 
 public List<FileStorer> getFilesfromsolr()
 {
-	return filesfromsolr;
+		return filesfromsolr;
 }
 
 public void setAllfiles(List<FileStorer> g)
 {
-	allfiles = g;
+		allfiles = g;
 }
 public List<FileStorer> getAllfiles()
 {
-	return allfiles;
+		return allfiles;
 }
 
 	
 public void setSelecteddownloadfile(FileStorer afiles)
 {
-	selecteddownloadfile = afiles;
+		selecteddownloadfile = afiles;
 }
 
 public FileStorer getSelecteddownloadfile()
 {
-	return selecteddownloadfile;
+		return selecteddownloadfile;
 }
 
 public void setSelectedfile(FileStorer thefile)
 {
-	selectedfile = thefile;
+		selectedfile = thefile;
 }
 
 public FileStorer getSelectedfile()
 {
-	return selectedfile;
+		return selectedfile;
 }
 
 public void setResults(List<Publication> re)
 {
-	this.results = re;
+		this.results = re;
 }
 
 public List<Publication> getResults()
 {
-	return results;
+		return results;
 }
 
 public void setSearchresultpub (Publication pub)
 {
-	this.searchresultpub = pub;
+		this.searchresultpub = pub;
 }
 
 public Publication getSearchresultpub()
 {
-	return searchresultpub;
+		return searchresultpub;
 }
 
 public String getSearchentry ()
 {
-	return searchentry;
+		return searchentry;
 }
 
 public void setSearchentry(String se)
 {
-	this.searchentry = se;
+		this.searchentry = se;
 }
 
   public void setStep(int currstep)
@@ -275,10 +267,7 @@ public void setSearchentry(String se)
   public void moveStep(int nextstep)
 	{
 		int previousstep = step;
-		
 		step = nextstep;
-		
-		
 		
 		if(step ==1)
 		{
@@ -441,8 +430,8 @@ public void downloadInit()
 
 	String currtype = FilenameUtils.getExtension(selecteddownloadfile.getFilename());
 
-  selecteddownloadfile.setFiletype(currtype);
-//Begin the download process
+	selecteddownloadfile.setFiletype(currtype);
+	//Begin the download process
 	downloadFile(selecteddownloadfilename, selecteddownloadfiletype);
 	
 	
@@ -457,14 +446,13 @@ public String onFlowProcess(FlowEvent event) {
 	 else if(event.getOldStep().equalsIgnoreCase("searchresultsofpubs") )
        {
 		  RetrieveFiles();
-		 
           return "searchresultdisplay";
        }	
 	 else
 	 {
-			cleanMutual();
-			reassignStepsandSearch();
-		 return "searchpubs";
+		cleanMutual();
+		reassignStepsandSearch();
+		return "searchpubs";
 	 }
 		 
 }
@@ -474,13 +462,9 @@ private void RetrieveFiles() {
 	int currpmid =  searchresultpub.getPmid();
 	pmid = String.valueOf(currpmid);
 	
-
 	String currlocation = PropsUtil.get("data_store2") + this.searchresultpub.getPmid() + "/";
-
 	File folder = new File(currlocation);
-	
-	
-	
+
     	for(File currfile: folder.listFiles())
     	{
     		
@@ -507,10 +491,7 @@ public void downloadFile(String filename, String filetype){
          if(filetype.equals("abf")){
                  contentType = "text/abf";
          }
-     
-       
-    
-		         
+      
 		  FacesContext facesContext = (FacesContext) FacesContext.getCurrentInstance();
 		  ExternalContext externalContext = facesContext.getExternalContext();
 		  PortletResponse portletResponse = (PortletResponse) externalContext.getResponse();
@@ -569,11 +550,7 @@ public void downloadFile(String filename, String filetype){
 			 adminRequest.setAction(CoreAdminAction.RELOAD);
 
 			 SolrServer solr = new HttpSolrServer ("http://localhost:8983/solr");
-			 
-			 
 			 String query;
-			
-			
 			 query = "completion:true AND collector:" + searchentry;
 			 
 			
@@ -583,26 +560,17 @@ public void downloadFile(String filename, String filetype){
 			 
 			
 			 QueryResponse response = new QueryResponse();
-			 
-			
 			 response = solr.query(theq);
-			 
-			 
 			 SolrDocumentList list = response.getResults();
 		
-			 
-			
-			 
 			 int docnum = 1;
 			
 			 for(SolrDocument doc: list)
 			 {
 				Publication currlist = new Publication();
 
-				 List<String> fullnames =  new ArrayList<String> ();
-				 String currepubsum1 = "", currepubsum2 = "";
-				
-				
+				List<String> fullnames =  new ArrayList<String> ();
+				String currepubsum1 = "", currepubsum2 = "";
 				
 				currlist.setTitle(doc.getFieldValue("ptitle").toString());
 				
@@ -612,40 +580,40 @@ public void downloadFile(String filename, String filetype){
 				
 				if(doc.getFieldValue("journalname")!=null)
 				{
-				currlist.setJournalname(doc.getFieldValue("journalname").toString());
+					currlist.setJournalname(doc.getFieldValue("journalname").toString());
 				}
 				
 				if(doc.getFieldValue("journalyear")!=null)
 				{
-				currlist.setJournalyear(doc.getFieldValue("journalyear").toString());
+					currlist.setJournalyear(doc.getFieldValue("journalyear").toString());
 				}
 				if(doc.getFieldValue("journalday")!=null)
 				{
-				currlist.setJournalday(doc.getFieldValue("journalday").toString());
+					currlist.setJournalday(doc.getFieldValue("journalday").toString());
 				}
 				if(doc.getFieldValue("journalmonth")!=null)
 				{
-				currlist.setJournalmonth(doc.getFieldValue("journalmonth").toString());
+					currlist.setJournalmonth(doc.getFieldValue("journalmonth").toString());
 				}
 				if(doc.getFieldValue("journalpage")!=null)
 				{
-				currlist.setJournalstartpg(doc.getFieldValue("journalpage").toString());
+					currlist.setJournalstartpg(doc.getFieldValue("journalpage").toString());
 				}
 				if(doc.getFieldValue("journalissue")!=null)
 				{
-				currlist.setJournalissue(doc.getFieldValue("journalissue").toString());
+					currlist.setJournalissue(doc.getFieldValue("journalissue").toString());
 				}
 				if(doc.getFieldValue("journalvolume")!=null)
 				{
-				currlist.setJournalvolume(doc.getFieldValue("journalvolume").toString());
+					currlist.setJournalvolume(doc.getFieldValue("journalvolume").toString());
 				}
 				if(doc.getFieldValue("publication_year")!=null)
 				{
-				currlist.setYear(doc.getFieldValue("publicationdate_year").toString());
+					currlist.setYear(doc.getFieldValue("publicationdate_year").toString());
 				}
 				if(doc.getFieldValue("doi") != null)
 				{
-				currlist.setDoi(doc.getFieldValue("doi").toString());
+					currlist.setDoi(doc.getFieldValue("doi").toString());
 				}
 				
 				if(doc.getFieldValues("pfileinfo") != null)
@@ -666,21 +634,19 @@ public void downloadFile(String filename, String filetype){
 				currlist.setFauthors(fieldValue);
 				currlist.setLauthors((List<String>) doc.getFieldValue("author_lastname"));
 				
-				
-			
-				
+
 				if(doc.getFieldValue("epubmonth") != null)
 				{
-				currlist.setEpubmonth(doc.getFieldValue("epubmonth").toString());
+					currlist.setEpubmonth(doc.getFieldValue("epubmonth").toString());
 				}
 				
 				if(doc.getFieldValue("epubyear") != null)
 				{
-				currlist.setEpubyear(doc.getFieldValue("epubyear").toString());
+					currlist.setEpubyear(doc.getFieldValue("epubyear").toString());
 				}
 				if(doc.getFieldValue("epubday") !=null)
 				{
-				currlist.setEpubday(doc.getFieldValue("epubday").toString());
+					currlist.setEpubday(doc.getFieldValue("epubday").toString());
 				}
 				if(doc.getFieldValue("author_fullname_list") !=null)
 				{

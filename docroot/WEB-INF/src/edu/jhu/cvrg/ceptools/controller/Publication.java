@@ -94,15 +94,13 @@ public class Publication implements Serializable{
     		  
     		  if(authorfull.charAt(i) == ',')
     		  {
-    		   commacount++;
+    		    commacount++;
 	    		currnames += authorfull.charAt(i);
     		  
     		  }
     		  else
-    		  {
-    			  
+    		  { 
     			  currnames += authorfull.charAt(i);
-    			  
     		  }
     		  
     		  if (commacount > 5)
@@ -373,13 +371,6 @@ public class Publication implements Serializable{
 		   this.epubsum2 = ep;
 	   }
 	   
-	   
-	   
-	   
-	   
-	   
-	   
-	   
-        
+     
 
 }
