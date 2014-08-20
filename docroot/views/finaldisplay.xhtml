@@ -10,9 +10,7 @@
 <h:form id="finalcomplete" >  
 
 
-
-		
-    <p:commandButton value="Return to Start a New Search" id="startover" action="#{searchPubs.moveStep(1)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" /> <br/><br/>
+    
     <h:outputText style="font-weight: bold" value="#{searchPubs.searchresultpub.title}"  id="selectedpubconfirmtt4"/> <br/>
 	<h:outputText value="#{searchPubs.searchresultpub.authorfull}"  id="selectedpubconfirmff4"/>. <br/>
 	<h:outputText value="#{searchPubs.searchresultpub.journalname}"  id="selectedpubconfirmjn4"/>.<h:outputText value="&#160;" />
@@ -63,7 +61,8 @@
  </p:column>
 </p:dataTable >
 <br/><br/><br/>
-
+<p:commandButton value="Start a New Search" id="startover1" action="#{searchPubs.moveStep(1)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" /> 
+<p:commandButton value="Return to Search Results" id="startover" action="#{searchPubs.moveStep(2)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" /> 
 
 
 </h:form>

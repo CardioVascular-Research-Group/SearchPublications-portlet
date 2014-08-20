@@ -27,12 +27,14 @@ public class Publication implements Serializable{
 	    private String title;
 	    private String theabstract;
 	    private String year;
+	    private boolean completed;  
 	    private int pmid;
 	    private int index;
 	    private List<File> files;
 	    private List<FileStorer> pubfiles;
 	    private List<String> filenames;
 	    private String authorfull;
+	    private String userid;
 	   
 
         
@@ -50,6 +52,8 @@ public class Publication implements Serializable{
         	year = "";
         	index = -1;
         	pmid = 0;
+        	completed = false;
+        	userid = "";
         	epubmonth = epubyear = epubday = doi = epubsum = epubsum2 = authorfull = "";
         	journalvolume = journalname = journalissue = journalyear = journalday = journalmonth = journalstartpg="";
         	
@@ -82,6 +86,16 @@ public class Publication implements Serializable{
         	this.authorfull = authorfull;
         }
         
+        
+      public String getUserid()
+      {
+    	return userid;  
+      }
+      
+      public void setUserid(String s)
+      {
+    	  userid = s;
+      }
       public String getSubstring()
       {
     	  
@@ -117,6 +131,15 @@ public class Publication implements Serializable{
     	  
     	  
     	  return currnames;
+      }
+      
+      public void setCompleted(Boolean c)
+      {
+    	  completed = c;
+      }
+      public Boolean getCompleted()
+      {
+    	  return completed;
       }
         
         public int getIndex()

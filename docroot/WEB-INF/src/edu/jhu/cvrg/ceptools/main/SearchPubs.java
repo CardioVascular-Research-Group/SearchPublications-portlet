@@ -36,7 +36,6 @@ import java.util.List;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
-
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.portlet.PortletResponse;
@@ -49,7 +48,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.request.CoreAdminRequest;
-
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
@@ -90,6 +88,7 @@ public class SearchPubs implements Serializable{
     private String selecteddownloadfilename;
     int step;
     int solrindex;
+    private boolean match;
 	
 
 	
@@ -112,6 +111,7 @@ public SearchPubs()
 	redostep2= false;
 	step1msg = "";
 	redostep2msg = "";
+	match = false;
 }
 
 
@@ -128,7 +128,7 @@ public void cleanMutual()
 	results = new ArrayList<Publication>();
 	allfiles = new ArrayList<FileStorer>();
 	selecteddownloadfile = null;
-	searchresultpub = null;
+	
 	selectedfile = null;
 	results = new ArrayList<Publication>();
 	files = new ArrayList<File>();
@@ -139,9 +139,17 @@ public void cleanMutual()
 	redostep2msg = "";
 	pmid ="";
 	selecteddownloadfiletype = selecteddownloadfilename="";
+	match = false;
 }
 
-	
+public void setMatch(boolean m)
+{
+	match = m;	
+}
+public boolean getMatch()
+{
+	return match;
+}
 	
 public void setStep1msg(String m)
 {
@@ -296,7 +304,11 @@ public void setSearchentry(String se)
 			}
 			else if(redostep2 == true)
 			{
-				if(searchresultpub != null)
+				if(previousstep == 99 || previousstep==3)
+				{
+					step = 2;
+				}
+			    else if(searchresultpub != null)
 				{
 					step = 3;
 				}
@@ -304,8 +316,7 @@ public void setSearchentry(String se)
 				{
 					step = 2;
 					redostep2msg = "Please choose a single citation from the listing.";
-				}
-				
+					}
 				
 			}
 			
@@ -313,8 +324,24 @@ public void setSearchentry(String se)
 		}
 		if(step == 3)
 		{
-			RetrieveFiles();
-			setDisplay();
+			
+			if(!searchresultpub.getCompleted() )
+			{
+				 String curruserid = Long.toString(LiferayFacesContext.getInstance().getUser().getUserId());
+				 
+				 logger.info("The current user is: " + curruserid + " one file id is: " + searchresultpub.getUserid());
+				 
+				if(curruserid.equals(searchresultpub.getUserid()))
+				{
+					match = true;
+				}
+				step = 99;
+			}
+			else
+			{
+				RetrieveFiles();
+				setDisplay();
+			}
 		}
 		
 		try{
@@ -551,7 +578,7 @@ public void downloadFile(String filename, String filetype){
 
 			 SolrServer solr = new HttpSolrServer ("http://localhost:8983/solr");
 			 String query;
-			 query = "completion:true AND collector:" + searchentry;
+			 query = "collector:" + searchentry;
 			 
 			
 			 SolrQuery theq = new SolrQuery();
@@ -576,13 +603,30 @@ public void downloadFile(String filename, String filetype){
 				
 				currlist.setAbstract(doc.getFieldValue("abstract").toString());
 				currlist.setPmid(Integer.valueOf(doc.getFieldValue("pmid").toString()));
+			
 				pmid = String.valueOf(currlist.getPmid());
+				
+				if(doc.getFieldValue("lruid") != null)
+				{
+				currlist.setUserid(doc.getFieldValue("lruid").toString());
+				}
+				else
+				{
+				currlist.setUserid("");	
+				}
 				
 				if(doc.getFieldValue("journalname")!=null)
 				{
 					currlist.setJournalname(doc.getFieldValue("journalname").toString());
 				}
-				
+				if(doc.getFieldValue("completion")!=null)
+				{
+					currlist.setCompleted(Boolean.valueOf(doc.getFieldValue("completion").toString()));
+				}
+				else
+				{
+					currlist.setCompleted(false);
+				}
 				if(doc.getFieldValue("journalyear")!=null)
 				{
 					currlist.setJournalyear(doc.getFieldValue("journalyear").toString());
