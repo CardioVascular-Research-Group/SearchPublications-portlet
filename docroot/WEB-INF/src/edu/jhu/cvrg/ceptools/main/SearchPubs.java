@@ -47,11 +47,11 @@ import org.primefaces.event.FlowEvent;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
-import org.apache.solr.client.solrj.request.CoreAdminRequest;
+
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.params.CoreAdminParams.CoreAdminAction;
+
 
 import com.liferay.faces.portal.context.LiferayFacesContext;
 import com.liferay.portal.kernel.util.PropsUtil;
@@ -144,11 +144,11 @@ public void cleanMutual()
 
 public void setMatch(boolean m)
 {
-	match = m;	
+		match = m;	
 }
 public boolean getMatch()
 {
-	return match;
+		return match;
 }
 	
 public void setStep1msg(String m)
@@ -573,8 +573,8 @@ public void downloadFile(String filename, String filetype){
 		 try
 		 {
 			
-			 CoreAdminRequest adminRequest = new CoreAdminRequest();
-			 adminRequest.setAction(CoreAdminAction.RELOAD);
+			// CoreAdminRequest adminRequest = new CoreAdminRequest();
+			// adminRequest.setAction(CoreAdminAction.RELOAD);
 
 			 SolrServer solr = new HttpSolrServer ("http://localhost:8983/solr");
 			 String query;
