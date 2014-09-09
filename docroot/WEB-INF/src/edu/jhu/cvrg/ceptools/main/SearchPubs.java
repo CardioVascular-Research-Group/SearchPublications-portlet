@@ -327,7 +327,8 @@ public void setSearchentry(String se)
 			
 			if(!searchresultpub.getCompleted() )
 			{
-				 String curruserid = Long.toString(LiferayFacesContext.getInstance().getUser().getUserId());
+				match = false;
+				String curruserid = Long.toString(LiferayFacesContext.getInstance().getUser().getUserId());
 				 
 				 logger.info("The current user is: " + curruserid + " one file id is: " + searchresultpub.getUserid());
 				 

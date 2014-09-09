@@ -253,6 +253,7 @@ public class Publication implements Serializable{
 	   {
 		   this.filenames = filenames;
 	   }
+      
       public void setFiles(List<File> files)
 	   {
 		   this.files = files;
