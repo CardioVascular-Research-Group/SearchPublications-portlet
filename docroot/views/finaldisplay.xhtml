@@ -7,69 +7,42 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 >
 
-<h:form id="finalcomplete" >  
-
-
-    
-    <h:outputText style="font-weight: bold" value="#{searchPubs.searchresultpub.title}"  id="selectedpubconfirmtt4"/> <br/>
-	<h:outputText value="#{searchPubs.searchresultpub.authorfull}"  id="selectedpubconfirmff4"/>. <br/>
-	<h:outputText value="#{searchPubs.searchresultpub.journalname}"  id="selectedpubconfirmjn4"/>.<h:outputText value="&#160;" />
-	<h:outputText value="#{searchPubs.searchresultpub.journalyear}"  id="selectedpubconfirmjy4"/><h:outputText value="&#160;" />
-	<h:outputText value="#{searchPubs.searchresultpub.journalmonth}"  id="selectedpubconfirmjm4"/><h:outputText value="&#160;" />
-	<h:outputText value="#{searchPubs.searchresultpub.journalday}"  id="selectedpubconfirmjd4"/>;<h:outputText value="&#160;" />
-   <h:outputText value="#{searchPubs.searchresultpub.epubsum2}"  id="epubsum15"/><h:outputText value="&#160;" />
-	<br/>
-	<h:outputText value="#{searchPubs.searchresultpub.doi}"  id="selectedpubdoi"/><h:outputText value="&#160;" /><h:outputText value="&#160;" />
-	 <h:outputText value="#{searchPubs.searchresultpub.epubsum}"  id="epubsum"/><h:outputText value="&#160;" />
- <br/><br/>
-	<h:outputText style="font-weight: bold" value="Abstract:  "/> 
-	<h:outputText value="#{searchPubs.searchresultpub.abstract}" id="selectedpubconfirma"/> <br/>  
-				
-	<br/>PMID: <h:outputText value="#{searchPubs.searchresultpub.pmid}"  id="pmid1"/> <br/>
-				
-		 
-  		 <br/>
-   <p:commandButton  id="downloadziponly" value="Click to Download All Files (.zip)" action="#{searchPubs.downloadZipOnly()}" ajax="false"/>
- 
- <br/><br/>
-	
-        <p:dataTable id="ft" var="sfiles" rowKey="#{sfiles.index}" value="#{searchPubs.searchresultpub.pubfiles}" type="ordered" selection="#{searchPubs.selecteddownloadfile}" selectionMode="single"  paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" style="width:800px;">
-
-                 <p:column headerText="Filename"  style="width:20%"> 
-				 #{sfiles.filename}
-				  </p:column>  
-				  	   <p:column headerText="File Size">
-				 #{sfiles.filesize} KB
-				  
-				  </p:column>
-				  
-				  <p:column headerText="Figure and Panel" style="width:20%">
-						
-			      #{sfiles.figpandisplay}
-					
-				  </p:column>
-				  
-				  <p:column headerText="Description"  style="width:60%">
-				  #{sfiles.description}
-				  
-				  </p:column>
- <p:column headerText="Download" ><br/><br/>
- <p:commandButton  id="downloadResults" value="Download this File" action="#{searchPubs.downloadRawFiles(sfiles)}" ajax="false"/>
-  
-
-
- </p:column>
-</p:dataTable >
-<br/><br/><br/>
-<p:commandButton value="Back: Return to Search Results" id="startover" action="#{searchPubs.moveStep(2)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" /> <h:outputText value="&#160;" /><h:outputText value="&#160;" /><h:outputText value="&#160;" />
-<p:commandButton value="Start a New Search" id="startover1" action="#{searchPubs.moveStep(1)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" /> 
-
-
-
-</h:form>
-
-
-
-					
+	<h:form id="finalcomplete" >  
+	 	<p>
+			<h:outputText style="font-weight: bold" value="#{searchPubs.searchresultpub.title}"  id="selectedpubconfirmtt4"/><br/>
+			#{searchPubs.searchresultpub.authorfull}. #{searchPubs.searchresultpub.journalname}; #{searchPubs.searchresultpub.journalyear}, #{searchPubs.searchresultpub.journalmonth} #{searchPubs.searchresultpub.journalday}; #{searchPubs.searchresultpub.epubsum2} <br/>
+			#{searchPubs.searchresultpub.doi}. #{searchPubs.searchresultpub.epubsum}
+		</p>
+		<p>
+			<strong>Abstract: </strong>#{searchPubs.searchresultpub.abstract}
+		</p>
+		<p>				
+			PMID: <h:outputText value="#{searchPubs.searchresultpub.pmid}"  id="pmid1"/>
+		</p>	
+		<p>
+		    <p:commandButton  id="downloadziponly" value="Click to Download All Files (.zip)" action="#{searchPubs.downloadZipOnly()}" ajax="false"/>
+		</p>	
+		<p:dataTable id="ft" var="sfiles" rowKey="#{sfiles.index}" value="#{searchPubs.searchresultpub.pubfiles}" type="ordered" selection="#{searchPubs.selecteddownloadfile}" selectionMode="single"  paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
+			<p:column headerText="Filename"  style="width:15%"> 
+				#{sfiles.filename}
+			</p:column>  
+			<p:column headerText="File Size" style="width:10%">
+				#{sfiles.filesize} KB
+			</p:column>
+			<p:column headerText="Figure and Panel" style="width:15%">	
+			   	#{sfiles.figpandisplay}
+			</p:column>
+			<p:column headerText="Description"  style="width:50%">
+				#{sfiles.description}
+			</p:column>
+			<p:column headerText="Download" style="width:10%">
+				<p:commandButton  id="downloadResults" value="Download this File" action="#{searchPubs.downloadRawFiles(sfiles)}" ajax="false"/>
+			</p:column>
+		</p:dataTable >
+		<p style="margin-top:15px">
+			<p:commandButton value="Back: Return to Search Results" id="startover" action="#{searchPubs.moveStep(2)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" />
+			<p:commandButton style="margin-left:15px" value="Start a New Search" id="startover1" action="#{searchPubs.moveStep(1)}" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);" /> 
+		</p>
+	</h:form>
 
 </f:view>
