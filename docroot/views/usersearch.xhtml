@@ -13,8 +13,8 @@
 	</p>
 	<p>
 		You may search by title, author, or PMID. To search by author, you may enter the name as “Last Name, First Name”, “Last Name, First Initial”, or simply “Last Name”. Use * for wildcard searches.<br/>
-		<h:inputText value="#{searchPubs.searchentry}" style="width:400px" id="se"/>
-		<br/> <h:messages for="se"/> <h:outputText value="#{searchPubs.redostep2msg}" style="color:red"/>
+		<h:inputText value="#{searchPubs.searchentry}" style="width:400px" id="se"/><br/>
+		<h:messages for="se"/> <h:outputText value="#{searchPubs.redostep2msg}" style="color:red"/>
 	</p>
 	<p>
 		<p:commandButton value="Next: View CEP Tools Search Results" id="step1next" action="#{searchPubs.moveStep(2)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>

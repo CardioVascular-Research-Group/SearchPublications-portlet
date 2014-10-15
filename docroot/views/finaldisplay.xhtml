@@ -13,12 +13,8 @@
 			#{searchPubs.searchresultpub.authorfull}. #{searchPubs.searchresultpub.journalname}; #{searchPubs.searchresultpub.journalyear}, #{searchPubs.searchresultpub.journalmonth} #{searchPubs.searchresultpub.journalday}; #{searchPubs.searchresultpub.epubsum2} <br/>
 			#{searchPubs.searchresultpub.doi}. #{searchPubs.searchresultpub.epubsum}
 		</p>
-		<p>
-			<strong>Abstract: </strong>#{searchPubs.searchresultpub.abstract}
-		</p>
-		<p>				
-			PMID: <h:outputText value="#{searchPubs.searchresultpub.pmid}"  id="pmid1"/>
-		</p>	
+		<p><strong>Abstract: </strong>#{searchPubs.searchresultpub.abstract}</p>
+		<p>PMID: #{searchPubs.searchresultpub.pmid}</p>	
 		<p>
 		    <p:commandButton  id="downloadziponly" value="Click to Download All Files (.zip)" action="#{searchPubs.downloadZipOnly()}" ajax="false"/>
 		</p>	
@@ -32,7 +28,7 @@
 			<p:column headerText="Figure and Panel" style="width:15%">	
 			   	#{sfiles.figpandisplay}
 			</p:column>
-			<p:column headerText="Description"  style="width:50%">
+			<p:column headerText="Description" style="width:50%">
 				#{sfiles.description}
 			</p:column>
 			<p:column headerText="Download" style="width:10%">
