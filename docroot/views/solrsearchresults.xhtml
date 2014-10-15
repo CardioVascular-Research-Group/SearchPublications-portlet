@@ -17,7 +17,7 @@
 			</p>
 			<p:dataTable id="myList1" var="pubs" value="#{searchPubs.results}" rowKey="#{pubs.index}" selection="#{searchPubs.searchresultpub}" selectionMode="single"  paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
 				<p:column headerText="Search Results" > 
-					#{pubs.index}. <strong>#{pubs.title}</strong><br/>#{pubs.getSubstring()}<br/>#{pubs.journalname}. #{pubs.journalyear} #{pubs.journalmonth} #{pubs.journalday}; #{pubs.epubsum2} <br/>
+					<strong>#{pubs.index}. #{pubs.title}</strong><br/>#{pubs.getSubstring()}<br/>#{pubs.journalname}. #{pubs.journalyear} #{pubs.journalmonth} #{pubs.journalday}; #{pubs.epubsum2} <br/>
 					#{pubs.doi} #{pubs.epubsum}<br/>
 					<h:outputText escape="false" value="This record already exists in the CEP Tools repository, but is hidden. It has not yet been made visible by its owner."  id="exists1" style="color: red" rendered="#{!pubs.completed}"/><br/>
 					PMID: #{pubs.pmid}
