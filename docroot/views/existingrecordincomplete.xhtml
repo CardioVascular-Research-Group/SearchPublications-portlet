@@ -1,0 +1,31 @@
+ <f:view
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+>
+
+	<h:form id="existingrecord" >  
+		<p>
+			<h:outputText rendered="#{searchPubs.searchresultpub.completed}" style="color: red" value="This record has already been added to the CEP Tools repository, with downloadable files available. Would you like to view this record?"/> 		
+			<h:outputText rendered="#{!searchPubs.searchresultpub.completed and !searchPubs.match}" style="color: red" value="This record already exists in the CEP Tools repository, but is hidden. It has not yet been made visible by its owner."/> 								
+			<h:outputText rendered="#{!searchPubs.searchresultpub.completed and searchPubs.match}" style="color: red" value="This record has already been added to the CEP Tools repository, however it remains hidden because you have not made it visible. This publication will be available for viewing and file download once you make it visible to all users. You may access it by selecting View My Publications in the top menu."/>
+		</p>
+		<p>
+			<strong>#{searchPubs.searchresultpub.title}</strong><br/>
+			#{searchPubs.searchresultpub.authorfull}. <br/>
+			#{searchPubs.searchresultpub.journalname}. #{searchPubs.searchresultpub.journalyear} #{searchPubs.searchresultpub.journalmonth} #{searchPubs.searchresultpub.journalday}; #{searchPubs.searchresultpub.epubsum2}<br/>
+			#{searchPubs.searchresultpub.doi} #{searchPubs.searchresultpub.epubsum} 
+		</p>
+		<p><strong>Abstract: </strong>#{searchPubs.searchresultpub.abstract}</p>
+		<p>PMID: #{searchPubs.searchresultpub.pmid}</p>	
+		<p>
+			<p:commandButton value="Back: Return to Search Results" id="rt1" action="#{searchPubs.moveStep(2)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>
+			<p:commandButton style="margin-left:15px" value="Start a New Search" id="rt" action="#{searchPubs.moveStep(1)}" update="@form" onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);" oncomplete="setTimeout('document.getElementById(\'' + this.id + '\').disabled=false;', 50);"/>
+		</p>
+		
+	</h:form>
+
+</f:view>
