@@ -18,7 +18,7 @@
 		<p>
 		    <p:commandButton  id="downloadziponly" value="Click to Download All Files (.zip)" action="#{searchPubs.downloadZipOnly()}" ajax="false"/>
 		</p>	
-		<p:dataTable id="ft" var="sfiles" rowKey="#{sfiles.index}" value="#{searchPubs.searchresultpub.pubfiles}" type="ordered" selection="#{searchPubs.selecteddownloadfile}" selectionMode="single"  paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15" >
+		<p:dataTable id="ft" var="sfiles" rowKey="#{sfiles.index}" value="#{searchPubs.searchresultpub.pubfiles}" type="ordered" selection="#{searchPubs.selecteddownloadfile}" selectionMode="single"  paginator="true" rows="15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,15,25" >
 			<p:column headerText="Filename"  style="width:15%"> 
 				#{sfiles.filename}
 			</p:column>  

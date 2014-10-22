@@ -15,7 +15,7 @@
 				<p:commandButton rendered="#{!empty searchPubs.results}" value="Back: Return to Start a New Search" id="step2back2" action="#{searchPubs.moveStep(1)}"/>
 			    <p:commandButton style="margin-left:15px" rendered="#{!empty searchPubs.results}" value="Next: View the Selected Publication" id="step2next2" action="#{searchPubs.moveStep(2)}"/>
 			</p>
-			<p:dataTable id="myList1" var="pubs" value="#{searchPubs.results}" rowKey="#{pubs.index}" selection="#{searchPubs.searchresultpub}" selectionMode="single"  paginator="true" rows="10" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,10,15">
+			<p:dataTable id="myList1" var="pubs" value="#{searchPubs.results}" rowKey="#{pubs.index}" selection="#{searchPubs.searchresultpub}" selectionMode="single"  paginator="true" rows="15" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}" rowsPerPageTemplate="5,15,25">
 				<p:column headerText="Search Results" > 
 					<strong>#{pubs.index}. #{pubs.title}</strong><br/>#{pubs.getSubstring()}<br/>#{pubs.journalname}. #{pubs.journalyear} #{pubs.journalmonth} #{pubs.journalday}; #{pubs.epubsum2} <br/>
 					#{pubs.doi} #{pubs.epubsum}<br/>
